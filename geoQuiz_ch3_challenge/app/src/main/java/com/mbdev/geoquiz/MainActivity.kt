@@ -10,8 +10,9 @@ private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private var hasAnsweredAllQuestions = false
 
-    private val questionBank = listOf(
+    private var questionBank = mutableListOf(
         Question(R.string.question_australia, true),
         Question(R.string.question_oceans, true),
         Question(R.string.question_mideast, true),
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         binding.btnTrue.setOnClickListener {
             checkAnswer(true)
         }
@@ -39,44 +41,38 @@ class MainActivity : AppCompatActivity() {
             currentIndex = (currentIndex + 1) % questionBank.size
             updateQuestion()
         }
-
         updateQuestion()
 
     }
 
-    override fun onStart() {
-        super.onStart()
-        Log.d(TAG, "onStart(Bundle?) called")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "onResume(Bundle?) called")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "onPause(Bundle?) called")
-    }
-
     override fun onStop() {
         super.onStop()
-        Log.d(TAG, "onStop(Bundle?) called")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "onDestroy(Bundle?) called\n")
+        resetGame()
     }
 
     private fun updateQuestion() {
-        val questionTextResId = questionBank[currentIndex].textResId
-        binding.tvQuestion.setText(questionTextResId)
+        if (hasAnsweredAllQuestions) {
+            val messageResId = R.string.game_over
+            Snackbar.make(binding.llMain, messageResId, Snackbar.LENGTH_LONG).show()
+            resetGame()
+        }
+
+        if (questionBank[currentIndex].wasPreviouslyAsked) {
+            binding.btnTrue.isEnabled = false
+            binding.btnFalse.isEnabled = false
+            val questionTextResId = questionBank[currentIndex].textResId
+            binding.tvQuestion.setText(questionTextResId)
+        } else {
+            binding.btnTrue.isEnabled = true
+            binding.btnFalse.isEnabled = true
+            val questionTextResId = questionBank[currentIndex].textResId
+            binding.tvQuestion.setText(questionTextResId)
+        }
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = questionBank[currentIndex].answer
-
+        questionBank[currentIndex].wasPreviouslyAsked = true
         val messageResId = if (userAnswer == correctAnswer) {
             R.string.correct_snackbar
         } else {
@@ -84,5 +80,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         Snackbar.make(binding.llMain, messageResId, Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun resetGame() {
+        for (question in questionBank) {
+            question.wasPreviouslyAsked = false
+        }
     }
 }

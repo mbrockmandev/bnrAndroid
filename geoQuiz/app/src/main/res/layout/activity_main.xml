@@ -50,10 +50,18 @@
 
         <Button
             android:id="@+id/btnNext"
+            style=" "
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
             android:text="@string/next_button"
             app:icon="@drawable/arrow_right"
             app:iconGravity="end" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvScore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Score: 0" />
 </LinearLayout>

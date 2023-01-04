@@ -15,11 +15,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate(Bundle?) called")
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        Log.d(TAG, "Got a QuizViewModel: $quizViewModel")
+        updateQuestion()
 
         binding.btnTrue.setOnClickListener {
             checkAnswer(true)
@@ -33,21 +31,19 @@ class MainActivity : AppCompatActivity() {
             quizViewModel.moveToNextQuestion()
             updateQuestion()
         }
-        updateQuestion()
-
     }
 
-    override fun onStop() {
-        super.onStop()
-        quizViewModel.resetGame()
-    }
+//    override fun onStop() {
+//        super.onStop()
+//        quizViewModel.resetGame()
+//    }
 
     private fun updateQuestion() {
         quizViewModel.hasAnsweredAllQuestions = quizViewModel.numQuestionsAsked == 6
         if (quizViewModel.hasAnsweredAllQuestions) {
-            val calculatedScore = 100 * (quizViewModel.score / 6)
-            val messageResId = "Your score was ${calculatedScore}%!"
-            Snackbar.make(binding.llMain, messageResId, Snackbar.LENGTH_LONG).show()
+//            val calculatedScore = 100 * (quizViewModel.score / 6)
+//            val messageResId = "Your score was ${calculatedScore}%!"
+//            Snackbar.make(binding.llMain, messageResId, Snackbar.LENGTH_LONG).show()
             quizViewModel.resetGame()
             return
         }
@@ -70,16 +66,17 @@ class MainActivity : AppCompatActivity() {
         val correctAnswer = quizViewModel.questionBank[quizViewModel.currentIndex].answer
         quizViewModel.questionBank[quizViewModel.currentIndex].wasPreviouslyAsked = true
         val messageResId = if (userAnswer == correctAnswer) {
-            quizViewModel.score++
+//            quizViewModel.score++
             R.string.correct_snackbar
         } else {
             R.string.incorrect_snackbar
         }
 
-        binding.tvScore.text = quizViewModel.score.toString()
+//        binding.tvScore.text = quizViewModel.score.toString()
+
 
         binding.btnTrue.isEnabled = false
         binding.btnFalse.isEnabled = false
-        Snackbar.make(binding.llMain, messageResId, Snackbar.LENGTH_SHORT).show()
+//        Snackbar.make(binding.llMain, messageResId, Snackbar.LENGTH_SHORT).show()
     }
 }

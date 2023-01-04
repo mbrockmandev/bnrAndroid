@@ -37,8 +37,10 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         for (question in questionBank) {
             question.wasPreviouslyAsked = false
         }
-        numQuestionsAsked = 1
+        numQuestionsAsked = 0
         currentIndex = 0
+        score = 0
+        hasAnsweredAllQuestions = false
     }
 
 }

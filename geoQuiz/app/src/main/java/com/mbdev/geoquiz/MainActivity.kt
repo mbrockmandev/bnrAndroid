@@ -3,28 +3,15 @@ package com.mbdev.geoquiz
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.mbdev.geoquiz.databinding.ActivityMainBinding
-import java.util.*
 
 private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-
-    private var currentIndex = 0
-    private var score = 0
-    private var numQuestionsAsked = 0
-    private var hasAnsweredAllQuestions: Boolean = false
-
-    private var questionBank = mutableListOf(
-        Question(R.string.question_australia, true),
-        Question(R.string.question_oceans, true),
-        Question(R.string.question_mideast, true),
-        Question(R.string.question_africa, true),
-        Question(R.string.question_americas, true),
-        Question(R.string.question_asia, true),
-    )
+    private val quizViewModel: QuizViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        Log.d(TAG, "Got a QuizViewModel: $quizViewModel")
 
         binding.btnTrue.setOnClickListener {
             checkAnswer(true)
@@ -42,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnNext.setOnClickListener {
-            currentIndex = (currentIndex + 1) % questionBank.size
+            quizViewModel.moveToNextQuestion()
             updateQuestion()
         }
         updateQuestion()
@@ -51,57 +39,47 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        resetGame()
+        quizViewModel.resetGame()
     }
 
     private fun updateQuestion() {
-        hasAnsweredAllQuestions = numQuestionsAsked == 6
-        if (hasAnsweredAllQuestions) {
-            val calculatedScore = 100 * (score / 6)
+        quizViewModel.hasAnsweredAllQuestions = quizViewModel.numQuestionsAsked == 6
+        if (quizViewModel.hasAnsweredAllQuestions) {
+            val calculatedScore = 100 * (quizViewModel.score / 6)
             val messageResId = "Your score was ${calculatedScore}%!"
             Snackbar.make(binding.llMain, messageResId, Snackbar.LENGTH_LONG).show()
-            resetGame()
+            quizViewModel.resetGame()
             return
         }
 
-        if (questionBank[currentIndex].wasPreviouslyAsked) {
+        if (quizViewModel.questionBank[quizViewModel.currentIndex].wasPreviouslyAsked) {
             binding.btnTrue.isEnabled = false
             binding.btnFalse.isEnabled = false
-            val questionTextResId = questionBank[currentIndex].textResId
+            val questionTextResId = quizViewModel.questionBank[quizViewModel.currentIndex].textResId
             binding.tvQuestion.setText(questionTextResId)
         } else {
             binding.btnTrue.isEnabled = true
             binding.btnFalse.isEnabled = true
-            val questionTextResId = questionBank[currentIndex].textResId
+            val questionTextResId = quizViewModel.questionBank[quizViewModel.currentIndex].textResId
             binding.tvQuestion.setText(questionTextResId)
         }
-        numQuestionsAsked++
+        quizViewModel.numQuestionsAsked++
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
-        val correctAnswer = questionBank[currentIndex].answer
-        questionBank[currentIndex].wasPreviouslyAsked = true
+        val correctAnswer = quizViewModel.questionBank[quizViewModel.currentIndex].answer
+        quizViewModel.questionBank[quizViewModel.currentIndex].wasPreviouslyAsked = true
         val messageResId = if (userAnswer == correctAnswer) {
-            score++
+            quizViewModel.score++
             R.string.correct_snackbar
         } else {
             R.string.incorrect_snackbar
         }
 
-        binding.tvScore.text = score.toString()
+        binding.tvScore.text = quizViewModel.score.toString()
 
         binding.btnTrue.isEnabled = false
         binding.btnFalse.isEnabled = false
         Snackbar.make(binding.llMain, messageResId, Snackbar.LENGTH_SHORT).show()
-    }
-
-    private fun resetGame() {
-        for (question in questionBank) {
-            question.wasPreviouslyAsked = false
-        }
-        numQuestionsAsked = 1
-//        score = 0
-        currentIndex = 0
-
     }
 }

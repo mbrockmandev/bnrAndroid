@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import com.mbdev.criminalintent.databinding.FragmentCrimeDetailBinding
 import java.util.*
@@ -30,6 +31,26 @@ class CrimeDetailFragment : Fragment() {
     ): View? {
         binding = FragmentCrimeDetailBinding.inflate(layoutInflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.apply {
+            etCrimeTitle.doOnTextChanged { text, _, _, _ ->
+                crime = crime.copy(title = text.toString())
+            }
+
+            btnCrimeDate.apply {
+                text = crime.date.toString()
+                isEnabled = false
+            }
+
+            cbCrimeSolved.setOnCheckedChangeListener { _, isChecked ->
+                crime = crime.copy(isSolved = isChecked)
+            }
+
+
+        }
     }
 
 }

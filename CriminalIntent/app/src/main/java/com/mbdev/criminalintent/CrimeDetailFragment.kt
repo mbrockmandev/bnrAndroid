@@ -10,8 +10,12 @@ import com.mbdev.criminalintent.databinding.FragmentCrimeDetailBinding
 import java.util.*
 
 class CrimeDetailFragment : Fragment() {
-    private lateinit var binding: FragmentCrimeDetailBinding
-    private lateinit var crime: Crime
+    lateinit var crime: Crime
+    private var _binding: FragmentCrimeDetailBinding? = null
+    private val binding
+        get() = checkNotNull(_binding) {
+            "Cannot access binding because it is null. Is the view visible?"
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +33,7 @@ class CrimeDetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentCrimeDetailBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentCrimeDetailBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -39,18 +43,19 @@ class CrimeDetailFragment : Fragment() {
             etCrimeTitle.doOnTextChanged { text, _, _, _ ->
                 crime = crime.copy(title = text.toString())
             }
-
             btnCrimeDate.apply {
                 text = crime.date.toString()
                 isEnabled = false
             }
-
             cbCrimeSolved.setOnCheckedChangeListener { _, isChecked ->
                 crime = crime.copy(isSolved = isChecked)
             }
-
-
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

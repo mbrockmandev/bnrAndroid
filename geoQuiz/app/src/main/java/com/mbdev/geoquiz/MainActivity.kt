@@ -1,10 +1,14 @@
 package com.mbdev.geoquiz
 
 import android.app.Activity
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import com.google.android.material.snackbar.Snackbar
 import com.mbdev.geoquiz.databinding.ActivityMainBinding
 
@@ -46,6 +50,17 @@ class MainActivity : AppCompatActivity() {
             quizViewModel.moveToNextQuestion()
             updateQuestion()
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            blurCheatButton()
+        }
+
+        binding.btnShowAPI.setOnClickListener {
+            val message = (android.os.Build.VERSION.SDK_INT)
+            Snackbar.make(binding.llMain, "Your current API is: $message", Snackbar.LENGTH_SHORT).show()
+
+        }
+
     }
 
     private fun updateQuestion() {
@@ -82,5 +97,15 @@ class MainActivity : AppCompatActivity() {
         binding.btnTrue.isEnabled = false
         binding.btnFalse.isEnabled = false
         Snackbar.make(binding.llMain, messageResId, Snackbar.LENGTH_SHORT).show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun blurCheatButton() {
+        val effect = RenderEffect.createBlurEffect(
+            10.0f,
+            10.0f,
+            Shader.TileMode.CLAMP
+        )
+        binding.btnCheat.setRenderEffect(effect)
     }
 }

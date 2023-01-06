@@ -1,18 +1,26 @@
 package com.mbdev.geoquiz
 
-import android.content.Intent
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.mbdev.geoquiz.databinding.ActivityMainBinding
 
-private const val TAG = "MainActivity"
-
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+
     private val quizViewModel: QuizViewModel by viewModels()
+
+    private val cheatLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            quizViewModel.isCheater =
+                result.data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +37,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnCheat.setOnClickListener {
-            val intent = Intent(this, CheatActivity::class.java)
-            startActivity(intent)
+            val answerIsTrue = quizViewModel.currentQuestionAnswer
+            val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+            cheatLauncher.launch(intent)
         }
 
         binding.btnNext.setOnClickListener {
@@ -39,17 +48,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    override fun onStop() {
-//        super.onStop()
-//        quizViewModel.resetGame()
-//    }
-
     private fun updateQuestion() {
         quizViewModel.hasAnsweredAllQuestions = quizViewModel.numQuestionsAsked == 6
         if (quizViewModel.hasAnsweredAllQuestions) {
-//            val calculatedScore = 100 * (quizViewModel.score / 6)
-//            val messageResId = "Your score was ${calculatedScore}%!"
-//            Snackbar.make(binding.llMain, messageResId, Snackbar.LENGTH_LONG).show()
             quizViewModel.resetGame()
             return
         }
@@ -71,18 +72,15 @@ class MainActivity : AppCompatActivity() {
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = quizViewModel.questionBank[quizViewModel.currentIndex].answer
         quizViewModel.questionBank[quizViewModel.currentIndex].wasPreviouslyAsked = true
-        val messageResId = if (userAnswer == correctAnswer) {
-//            quizViewModel.score++
-            R.string.correct_snackbar
-        } else {
-            R.string.incorrect_snackbar
+
+        val messageResId = when {
+            quizViewModel.isCheater -> R.string.judgment_snackbar
+            userAnswer == correctAnswer -> R.string.correct_snackbar
+            else -> R.string.incorrect_snackbar
         }
-
-//        binding.tvScore.text = quizViewModel.score.toString()
-
 
         binding.btnTrue.isEnabled = false
         binding.btnFalse.isEnabled = false
-//        Snackbar.make(binding.llMain, messageResId, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.llMain, messageResId, Snackbar.LENGTH_SHORT).show()
     }
 }

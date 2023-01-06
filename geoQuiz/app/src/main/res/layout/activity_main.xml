@@ -49,6 +49,13 @@
             app:iconGravity="end" />
 
         <Button
+            android:id="@+id/btnCheat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/cheat_button"/>
+
+        <Button
             android:id="@+id/btnNext"
             style=" "
             android:layout_width="wrap_content"

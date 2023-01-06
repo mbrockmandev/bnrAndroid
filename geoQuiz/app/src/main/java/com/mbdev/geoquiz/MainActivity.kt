@@ -1,5 +1,6 @@
 package com.mbdev.geoquiz
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -25,6 +26,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnFalse.setOnClickListener {
             checkAnswer(false)
+        }
+
+        binding.btnCheat.setOnClickListener {
+            val intent = Intent(this, CheatActivity::class.java)
+            startActivity(intent)
         }
 
         binding.btnNext.setOnClickListener {

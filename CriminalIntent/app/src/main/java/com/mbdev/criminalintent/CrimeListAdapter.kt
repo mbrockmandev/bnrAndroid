@@ -1,14 +1,30 @@
 package com.mbdev.criminalintent
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Recycler
+import com.mbdev.criminalintent.MultipleCrimeListTypeAdapter.Companion.POLICE_VIEW
 import com.mbdev.criminalintent.databinding.ListItemCrimeBinding
+import com.mbdev.criminalintent.databinding.ListItemCrimePoliceBinding
+import kotlinx.coroutines.NonDisposableHandle.parent
+import kotlin.text.Typography.copyright
 
-class CrimeHolder(
-    val binding: ListItemCrimeBinding
-) : RecyclerView.ViewHolder(binding.root) {
+class CrimeHolder(val binding: ListItemCrimeBinding) : RecyclerView.ViewHolder(binding.root) {
+    fun bind(crime: Crime) {
+        binding.tvCrimeTitle.text = crime.title
+        binding.tvCrimeDate.text = crime.date.toString()
 
+        binding.root.setOnClickListener {
+            Toast.makeText(
+                binding.root.context,
+                "${crime.title} clicked!",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 }
 
 class CrimeListAdapter(
@@ -32,3 +48,75 @@ class CrimeListAdapter(
     override fun getItemCount() = crimes.size
 }
 
+
+class MultipleCrimeListTypeAdapter(
+    private val crimes: List<Crime>
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    companion object {
+        const val POLICE_VIEW = 1
+        const val NO_POLICE_VIEW = 2
+    }
+
+    private inner class PoliceView(val binding: ListItemCrimePoliceBinding) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(crime: Crime) {
+            binding.tvPoliceCrimeTitle.text = crime.title
+            binding.tvPoliceCrimeDate.text = crime.date.toString()
+            binding.btnContactPolice.setOnClickListener {
+                Toast.makeText(
+                    binding.root.context,
+                    "Police were sent for ${crime.title}!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private inner class NoPoliceView(val binding: ListItemCrimeBinding) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(crime: Crime) {
+            binding.tvCrimeTitle.text = crime.title
+            binding.tvCrimeDate.text = crime.date.toString()
+
+            binding.root.setOnClickListener {
+                Toast.makeText(
+                    binding.root.context,
+                    "${crime.title} clicked!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        if (viewType == POLICE_VIEW) {
+            val binding = ListItemCrimePoliceBinding.inflate(inflater, parent, false)
+            return PoliceView(binding)
+        } else {
+            val binding = ListItemCrimeBinding.inflate(inflater, parent, false)
+            return NoPoliceView(binding)
+        }
+    }
+
+    override fun getItemCount() = crimes.size
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val crime = crimes[position]
+        if (crime.requiresPolice) {
+            (holder as PoliceView).bind(crime)
+        } else {
+            (holder as NoPoliceView).bind(crime)
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        if (crimes[position].requiresPolice) {
+            return POLICE_VIEW
+        } else {
+            return NO_POLICE_VIEW
+        }
+    }
+
+}

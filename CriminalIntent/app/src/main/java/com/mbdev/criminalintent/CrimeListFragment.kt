@@ -37,7 +37,8 @@ class CrimeListFragment : Fragment() {
         binding.rvCrimeList.layoutManager = LinearLayoutManager(context)
 
         val crimes = crimeListViewModel.crimes
-        val adapter = CrimeListAdapter(crimes)
+//        val adapter = CrimeListAdapter(crimes)
+        val adapter = MultipleCrimeListTypeAdapter(crimes)
         binding.rvCrimeList.adapter = adapter
 
         return binding.root

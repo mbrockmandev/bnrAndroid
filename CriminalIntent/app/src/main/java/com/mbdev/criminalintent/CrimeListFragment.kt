@@ -9,11 +9,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mbdev.criminalintent.databinding.FragmentCrimeListBinding
 import kotlinx.coroutines.launch
-
-private const val TAG = "CrimeListFragment"
 
 class CrimeListFragment : Fragment() {
     private var _binding: FragmentCrimeListBinding? = null
@@ -39,7 +38,11 @@ class CrimeListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 crimeListViewModel.crimes.collect { crimes ->
-                    binding.rvCrimeList.adapter = CrimeListAdapter(crimes)
+                    binding.rvCrimeList.adapter = CrimeListAdapter(crimes) { crimeId ->
+                        findNavController().navigate(
+                            CrimeListFragmentDirections.showCrimeDetail(crimeId)
+                        )
+                    }
                 }
             }
         }

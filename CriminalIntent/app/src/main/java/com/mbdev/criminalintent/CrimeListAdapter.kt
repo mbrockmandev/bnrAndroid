@@ -10,25 +10,29 @@ import com.mbdev.criminalintent.MultipleCrimeListTypeAdapter.Companion.POLICE_VI
 import com.mbdev.criminalintent.databinding.ListItemCrimeBinding
 import com.mbdev.criminalintent.databinding.ListItemCrimePoliceBinding
 import kotlinx.coroutines.NonDisposableHandle.parent
+import java.util.*
 import kotlin.text.Typography.copyright
 
 class CrimeHolder(val binding: ListItemCrimeBinding) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(crime: Crime) {
+    fun bind(crime: Crime, onCrimeClicked: (crimeId: UUID) -> Unit) {
         binding.tvCrimeTitle.text = crime.title
         binding.tvCrimeDate.text = crime.date.toString()
 
-        binding.ivSolved.setOnClickListener {
-            Toast.makeText(
-                binding.root.context,
-                "${crime.title} clicked!",
-                Toast.LENGTH_SHORT
-            ).show()
+        binding.root.setOnClickListener {
+            onCrimeClicked(crime.id)
+        }
+
+        binding.ivSolved.visibility = if (crime.isSolved) {
+            View.VISIBLE
+        } else {
+            View.GONE
         }
     }
 }
 
 class CrimeListAdapter(
-    private val crimes: List<Crime>
+    private val crimes: List<Crime>,
+    private val onCrimeClicked: (crimeId: UUID) -> Unit
 ) : RecyclerView.Adapter<CrimeHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
@@ -43,7 +47,7 @@ class CrimeListAdapter(
             binding.tvCrimeTitle.text = crime.title
             binding.tvCrimeDate.text = crime.date.toString()
         }
-        holder.bind(crime)
+        holder.bind(crime, onCrimeClicked)
     }
 
     override fun getItemCount() = crimes.size

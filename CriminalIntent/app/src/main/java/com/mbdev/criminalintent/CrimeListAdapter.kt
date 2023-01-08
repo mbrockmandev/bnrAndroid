@@ -17,7 +17,7 @@ class CrimeHolder(val binding: ListItemCrimeBinding) : RecyclerView.ViewHolder(b
         binding.tvCrimeTitle.text = crime.title
         binding.tvCrimeDate.text = crime.date.toString()
 
-        binding.root.setOnClickListener {
+        binding.ivSolved.setOnClickListener {
             Toast.makeText(
                 binding.root.context,
                 "${crime.title} clicked!",
@@ -43,6 +43,7 @@ class CrimeListAdapter(
             binding.tvCrimeTitle.text = crime.title
             binding.tvCrimeDate.text = crime.date.toString()
         }
+        holder.bind(crime)
     }
 
     override fun getItemCount() = crimes.size
@@ -116,19 +117,21 @@ class MultipleCrimeListTypeAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val crime = crimes[position]
-        if (crime.requiresPolice) {
-            (holder as PoliceView).bind(crime)
-        } else {
-            (holder as NoPoliceView).bind(crime)
-        }
+//        (holder as).bind(crime)
+//        if (crime.requiresPolice) {
+//            (holder as PoliceView).bind(crime)
+//        } else {
+//            (holder as NoPoliceView).bind(crime)
+//        }
+        (holder as NoPoliceView).bind(crime)
     }
 
-    override fun getItemViewType(position: Int): Int {
-        if (crimes[position].requiresPolice) {
-            return POLICE_VIEW
-        } else {
-            return NO_POLICE_VIEW
-        }
-    }
+//    override fun getItemViewType(position: Int): Int {
+//        if (crimes[position].requiresPolice) {
+//            return POLICE_VIEW
+//        } else {
+//            return NO_POLICE_VIEW
+//        }
+//    }
 
 }

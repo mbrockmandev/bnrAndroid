@@ -15,6 +15,7 @@
         android:layout_marginEnd="8dp"
         android:text="@string/crime_title"
         android:textAppearance="?attr/textAppearanceHeadline6"
+        android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/ivSolved"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,10 +27,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ivSolved"
-        app:layout_constraintTop_toBottomOf="@+id/tvCrimeTitle"
         android:text="@string/crime_date"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/ivSolved"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCrimeTitle"
         tools:layout_editor_absoluteX="38dp"
         tools:layout_editor_absoluteY="35dp" />
 
@@ -38,9 +40,43 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_solved" />
+        app:srcCompat="@drawable/ic_solved"
+        android:contentDescription="@string/handcuffs_image_description" />
+
+    <TextView
+        android:id="@+id/tvEmptyTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/empty_title"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/btnAddCrime"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddCrime"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/add_new_crime_button"
+        android:visibility="gone"
+        app:icon="@drawable/ic_menu_add"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Button"
+        tools:ignore="RedundantDescriptionCheck" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

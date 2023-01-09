@@ -25,6 +25,9 @@
         <action
             android:id="@+id/select_date"
             app:destination="@id/datePickerFragment" />
+        <action
+            android:id="@+id/delete_crime"
+            app:destination="@id/fcvCrimeList" />
     </fragment>
     <dialog
         android:id="@+id/datePickerFragment"

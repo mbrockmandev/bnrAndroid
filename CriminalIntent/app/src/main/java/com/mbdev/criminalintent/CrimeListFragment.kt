@@ -1,7 +1,6 @@
 package com.mbdev.criminalintent
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -29,9 +28,7 @@ class CrimeListFragment : Fragment(), MenuProvider {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCrimeListBinding.inflate(layoutInflater, container, false)
         binding.rvCrimeList.layoutManager = LinearLayoutManager(context)
@@ -77,10 +74,6 @@ class CrimeListFragment : Fragment(), MenuProvider {
                 showNewCrime()
                 true
             }
-            R.id.deleteCrime -> {
-                deleteCrime()
-                true
-            }
             else -> false
         }
     }
@@ -88,19 +81,12 @@ class CrimeListFragment : Fragment(), MenuProvider {
     private fun showNewCrime() {
         viewLifecycleOwner.lifecycleScope.launch {
             val newCrime = Crime(
-                id = UUID.randomUUID(),
-                title = "",
-                date = Date(),
-                isSolved = false
+                id = UUID.randomUUID(), title = "", date = Date(), isSolved = false
             )
             crimeListViewModel.addCrime(newCrime)
             findNavController().navigate(CrimeListFragmentDirections.showCrimeDetail(newCrime.id))
         }
     }
 
-    private fun deleteCrime(crime: Crime) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            crimeListViewModel.deleteCrime(crime)
-        }
-    }
+
 }

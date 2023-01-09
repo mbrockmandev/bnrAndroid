@@ -5,7 +5,11 @@
     <string name="crime_details_label">Details</string>
     <string name="crime_solved_label">Solved</string>
     <string name="crime_title">Crime Title</string>
+    <string name="empty_title">There are no crimes! It\'s been too quiet. Add one now using the Button:</string>
     <string name="crime_date">Crime Date</string>
     <string name="new_crime">New Crime</string>
     <string name="delete_crime">Delete Crime</string>
+    <string name="crime_deleted_toast">The crime has been deleted from the database.</string>
+    <string name="add_new_crime_button">Click here to add a new crime</string>
+    <string name="handcuffs_image_description">Handcuffs</string>
 </resources>

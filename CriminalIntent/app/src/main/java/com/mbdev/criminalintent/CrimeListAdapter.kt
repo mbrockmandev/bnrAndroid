@@ -27,6 +27,8 @@ class CrimeHolder(val binding: ListItemCrimeBinding) : RecyclerView.ViewHolder(b
         } else {
             View.GONE
         }
+
+
     }
 }
 

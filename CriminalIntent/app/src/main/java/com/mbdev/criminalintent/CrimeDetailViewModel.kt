@@ -26,6 +26,13 @@ class CrimeDetailViewModel(crimeId: UUID) : ViewModel() {
         }
     }
 
+    suspend fun deleteCrime() {
+        val crimeToBeDeleted = crime.value?.let { crimeRepository.getCrime(it.id) }
+        if (crimeToBeDeleted != null) {
+            crimeRepository.deleteCrime(crimeToBeDeleted)
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
 

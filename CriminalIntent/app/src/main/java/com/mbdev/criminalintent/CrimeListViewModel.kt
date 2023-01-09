@@ -20,6 +20,9 @@ class CrimeListViewModel : ViewModel() {
     val crimes: StateFlow<List<Crime>>
         get() = _crimes.asStateFlow()
 
+    val isEmpty: Boolean
+        get() = crimes.value.isEmpty()
+
     init {
         viewModelScope.launch {
             crimeRepository.getCrimes().collect {
@@ -32,7 +35,6 @@ class CrimeListViewModel : ViewModel() {
         crimeRepository.addCrime(crime)
     }
 
-    suspend fun deleteCrime(crime: Crime) {
-        crimeRepository.deleteCrime(crime)
-    }
+
+
 }

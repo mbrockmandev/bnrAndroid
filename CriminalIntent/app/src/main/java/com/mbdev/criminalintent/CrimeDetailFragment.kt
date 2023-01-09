@@ -1,10 +1,10 @@
 package com.mbdev.criminalintent
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.DatePicker
+import android.widget.Toast
+import androidx.core.view.MenuProvider
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -20,7 +20,7 @@ import java.util.*
 
 private const val TAG = "CrimeDetailFragment"
 
-class CrimeDetailFragment : Fragment() {
+class CrimeDetailFragment : Fragment(), MenuProvider {
     private var _binding: FragmentCrimeDetailBinding? = null
     private val binding
         get() = checkNotNull(_binding) {
@@ -49,6 +49,8 @@ class CrimeDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.addMenuProvider(this)
+
         binding.apply {
             etCrimeTitle.doOnTextChanged { text, _, _, _ ->
                 crimeDetailViewModel.updateCrime { oldCrime ->
@@ -81,6 +83,7 @@ class CrimeDetailFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        activity?.removeMenuProvider(this)
         _binding = null
     }
 
@@ -97,6 +100,24 @@ class CrimeDetailFragment : Fragment() {
             }
 
             cbCrimeSolved.isChecked = crime.isSolved
+        }
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.fragment_crime_detail, menu)
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+
+        return when (menuItem.itemId) {
+            R.id.deleteCrime -> {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    crimeDetailViewModel.deleteCrime()
+                }
+                findNavController().navigate(CrimeDetailFragmentDirections.deleteCrime())
+                true
+            }
+            else -> false
         }
     }
 }

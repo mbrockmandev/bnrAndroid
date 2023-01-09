@@ -26,6 +26,9 @@ class CrimeListViewModel : ViewModel() {
                 _crimes.value = it
             }
         }
+    }
 
+    suspend fun addCrime(crime: Crime) {
+        crimeRepository.addCrime(crime)
     }
 }

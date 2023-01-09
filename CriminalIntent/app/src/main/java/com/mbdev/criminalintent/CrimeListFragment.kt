@@ -42,6 +42,7 @@ class CrimeListFragment : Fragment(), MenuProvider {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.addMenuProvider(this)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -58,6 +59,7 @@ class CrimeListFragment : Fragment(), MenuProvider {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        activity?.removeMenuProvider(this)
         _binding = null
     }
 

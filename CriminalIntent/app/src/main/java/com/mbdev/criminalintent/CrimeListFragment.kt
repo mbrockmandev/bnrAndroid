@@ -21,13 +21,10 @@ class CrimeListFragment : Fragment(), MenuProvider {
             "Cannot access binding because it is null. Is the view visible?"
         }
 
-    //    private lateinit var menuHost: MenuHost  //this is broken
     private val crimeListViewModel: CrimeListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setHasOptionsMenu(true)
-//        setupMenu()
     }
 
     override fun onCreateView(
@@ -77,27 +74,6 @@ class CrimeListFragment : Fragment(), MenuProvider {
         }
     }
 
-//    private fun setupMenu() {
-//
-//        requireActivity().addMenuProvider(object : MenuProvider {
-//            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-//                menuInflater.inflate(R.menu.fragment_crime_list, menu)
-//            }
-//
-//            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-//
-//                return when (menuItem.itemId) {
-//                    R.id.newCrime -> {
-//                        showNewCrime()
-//                        true
-//                    }
-//                    else -> true
-//                }
-//            }
-//        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-//    }
-
-
     private fun showNewCrime() {
         viewLifecycleOwner.lifecycleScope.launch {
             val newCrime = Crime(
@@ -110,22 +86,4 @@ class CrimeListFragment : Fragment(), MenuProvider {
             findNavController().navigate(CrimeListFragmentDirections.showCrimeDetail(newCrime.id))
         }
     }
-
-    // books implementation using deprecated version
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        super.onCreateOptionsMenu(menu, inflater)
-//        inflater.inflate(R.menu.fragment_crime_list, menu)
-//    }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return when (item.itemId) {
-//            R.id.newCrime -> {
-//                showNewCrime()
-//                true
-//            }
-//            else -> super.onOptionsItemSelected(item)
-//        }
-//    }
-
-
 }

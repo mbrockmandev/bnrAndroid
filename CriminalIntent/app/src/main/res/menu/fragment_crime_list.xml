@@ -7,5 +7,10 @@
         android:icon="@drawable/ic_menu_add"
         android:title="@string/new_crime"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/deleteCrime"
+        android:icon="@drawable/ic_menu_delete"
+        android:title="@string/delete_crime"
+        app:showAsAction="ifRoom|withText" />
 
 </menu>

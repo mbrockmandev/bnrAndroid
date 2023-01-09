@@ -1,6 +1,7 @@
 package com.mbdev.criminalintent
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -44,10 +45,16 @@ class CrimeListFragment : Fragment(), MenuProvider {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 crimeListViewModel.crimes.collect { crimes ->
-                    binding.rvCrimeList.adapter = CrimeListAdapter(crimes) { crimeId ->
-                        findNavController().navigate(
-                            CrimeListFragmentDirections.showCrimeDetail(crimeId)
-                        )
+                    if (crimes.isEmpty()) {
+//                        binding.rvCrimeList.visibility = GONE
+
+
+                    } else {
+                        binding.rvCrimeList.adapter = CrimeListAdapter(crimes) { crimeId ->
+                            findNavController().navigate(
+                                CrimeListFragmentDirections.showCrimeDetail(crimeId)
+                            )
+                        }
                     }
                 }
             }
@@ -70,6 +77,10 @@ class CrimeListFragment : Fragment(), MenuProvider {
                 showNewCrime()
                 true
             }
+            R.id.deleteCrime -> {
+                deleteCrime()
+                true
+            }
             else -> false
         }
     }
@@ -84,6 +95,12 @@ class CrimeListFragment : Fragment(), MenuProvider {
             )
             crimeListViewModel.addCrime(newCrime)
             findNavController().navigate(CrimeListFragmentDirections.showCrimeDetail(newCrime.id))
+        }
+    }
+
+    private fun deleteCrime(crime: Crime) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            crimeListViewModel.deleteCrime(crime)
         }
     }
 }

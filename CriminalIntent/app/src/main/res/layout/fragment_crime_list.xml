@@ -4,4 +4,6 @@
     android:id="@+id/rvCrimeList"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:visibility="visible"
     tools:listitem="@layout/list_item_crime" />
+

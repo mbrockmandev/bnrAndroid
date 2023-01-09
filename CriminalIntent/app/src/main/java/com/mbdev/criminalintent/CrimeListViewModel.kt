@@ -31,4 +31,8 @@ class CrimeListViewModel : ViewModel() {
     suspend fun addCrime(crime: Crime) {
         crimeRepository.addCrime(crime)
     }
+
+    suspend fun deleteCrime(crime: Crime) {
+        crimeRepository.deleteCrime(crime)
+    }
 }

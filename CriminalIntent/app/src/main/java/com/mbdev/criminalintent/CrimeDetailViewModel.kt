@@ -1,5 +1,7 @@
 package com.mbdev.criminalintent
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import androidx.lifecycle.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -11,6 +13,8 @@ class CrimeDetailViewModel(crimeId: UUID) : ViewModel() {
     private val _crime: MutableStateFlow<Crime?> = MutableStateFlow(null)
     val crime: StateFlow<Crime?> = _crime.asStateFlow()
 
+    var photo: Bitmap? = null
+
     init {
         viewModelScope.launch {
             _crime.value = crimeRepository.getCrime(crimeId)
@@ -21,6 +25,10 @@ class CrimeDetailViewModel(crimeId: UUID) : ViewModel() {
         _crime.update { oldCrime ->
             oldCrime?.let { onUpdate(it) }
         }
+    }
+
+    fun storePhoto(newPhoto: Bitmap) {
+        photo = newPhoto
     }
 
     suspend fun deleteCrime() {

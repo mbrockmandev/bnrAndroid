@@ -3,10 +3,13 @@ package com.mbdev.criminalintent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
@@ -58,7 +61,7 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
     }
 
     private var photoName: String? = null
-
+    private var crime: Crime? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -114,12 +117,34 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
                 Uri.parse(""),
             )
             ibtnCrimeCamera.isEnabled = canResolveIntent(captureImageIntent)
+
+            ivCrimePhoto.setOnClickListener {
+                if (ivCrimePhoto.tag != null) {
+
+                    val photo = prepPhoto()
+                    if (photo != null) {
+                        crimeDetailViewModel.storePhoto(photo)
+                        Log.d(">>>>>", "$photo set!")
+
+                        findNavController().navigate(
+                            com.mbdev.criminalintent.CrimeDetailFragmentDirections.zoomOnCrimePhoto(
+                                photo
+                            )
+                        )
+                    }
+                }
+
+            }
+
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 crimeDetailViewModel.crime.collect { crime ->
                     crime?.let { updateUI(it) }
+                    if (crime != null) {
+                        setCrime(thisCrime = crime)
+                    }
                 }
             }
         }
@@ -134,6 +159,10 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
         super.onDestroyView()
         activity?.removeMenuProvider(this)
         _binding = null
+    }
+
+    private fun setCrime(thisCrime: Crime) {
+        crime = thisCrime
     }
 
     private fun updateUI(crime: Crime) {
@@ -245,6 +274,22 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
                 binding.ivCrimePhoto.tag = null
             }
         }
+    }
+
+    private fun prepPhoto(): Bitmap? {
+        if (crime != null) {
+            val photoFile = crime!!.photoFileName.let {
+                File(requireContext().applicationContext.filesDir, it)
+            }
+
+            if (photoFile?.exists() == true) {
+                return BitmapFactory.decodeFile(photoFile.path, BitmapFactory.Options())
+            } else {
+                return null
+            }
+        }
+
+        return null
     }
 
     // menu methods

@@ -2,6 +2,8 @@ package com.mbdev.criminalintent
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import kotlin.math.roundToInt
 
 //class PictureUtils {
@@ -29,3 +31,9 @@ fun getScaledBitmap(path: String, destWidth: Int, destHeight: Int): Bitmap {
         inSampleSize = sampleSize
     })
 }
+
+//fun generateBitmap(drawable: Drawable): Bitmap {
+//    val options = BitmapFactory.Options()
+//    options.inJustDecodeBounds = true
+//    BitmapFactory.
+//}

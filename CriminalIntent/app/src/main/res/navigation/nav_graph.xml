@@ -9,7 +9,7 @@
         android:id="@+id/fcvCrimeList"
         android:name="com.mbdev.criminalintent.CrimeListFragment"
         android:label="CrimeListFragment"
-        tools:layout="@layout/fragment_crime_list" >
+        tools:layout="@layout/fragment_crime_list">
         <action
             android:id="@+id/show_crime_detail"
             app:destination="@id/crimeDetailFragment" />
@@ -18,7 +18,7 @@
         android:id="@+id/crimeDetailFragment"
         android:name="com.mbdev.criminalintent.CrimeDetailFragment"
         android:label="CrimeDetailFragment"
-        tools:layout="@layout/fragment_crime_detail" >
+        tools:layout="@layout/fragment_crime_detail">
         <argument
             android:name="crimeId"
             app:argType="java.util.UUID" />
@@ -28,13 +28,25 @@
         <action
             android:id="@+id/delete_crime"
             app:destination="@id/fcvCrimeList" />
+        <action
+            android:id="@+id/zoom_on_crime_photo"
+            app:destination="@id/dialogFragment" />
     </fragment>
     <dialog
         android:id="@+id/datePickerFragment"
         android:name="com.mbdev.criminalintent.DatePickerFragment"
-        android:label="DatePickerFragment" >
+        android:label="DatePickerFragment">
         <argument
             android:name="crimeDate"
             app:argType="java.util.Date" />
     </dialog>
+    <fragment
+        android:id="@+id/dialogFragment"
+        android:name="com.mbdev.criminalintent.DialogFragment"
+        android:label="DialogFragment">
+        <argument
+            android:name="crimePhoto"
+            app:argType="android.graphics.Bitmap"
+            app:nullable="true" />
+    </fragment>
 </navigation>

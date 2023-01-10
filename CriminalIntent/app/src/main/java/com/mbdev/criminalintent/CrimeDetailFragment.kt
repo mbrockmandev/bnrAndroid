@@ -119,21 +119,20 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
             ibtnCrimeCamera.isEnabled = canResolveIntent(captureImageIntent)
 
             ivCrimePhoto.setOnClickListener {
-                if (ivCrimePhoto.tag != null) {
-
-                    val photo = prepPhoto()
-                    if (photo != null) {
-                        crimeDetailViewModel.storePhoto(photo)
-                        Log.d(">>>>>", "$photo set!")
-
-                        findNavController().navigate(
-                            com.mbdev.criminalintent.CrimeDetailFragmentDirections.zoomOnCrimePhoto(
-                                photo
-                            )
-                        )
-                    }
-                }
-
+//                if (ivCrimePhoto.tag != null) {
+//
+//                    val photo = prepPhoto()
+//                    if (photo != null) {
+//                        crimeDetailViewModel.storePhoto(photo)
+//                        Log.d(">>>>>", "$photo set!")
+//
+//                        findNavController().navigate(
+//                            com.mbdev.criminalintent.CrimeDetailFragmentDirections.zoomOnCrimePhoto(
+//                                photo
+//                            )
+//                        )
+//                    }
+//                }
             }
 
         }
@@ -276,21 +275,21 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
         }
     }
 
-    private fun prepPhoto(): Bitmap? {
-        if (crime != null) {
-            val photoFile = crime!!.photoFileName.let {
-                File(requireContext().applicationContext.filesDir, it)
-            }
-
-            if (photoFile?.exists() == true) {
-                return BitmapFactory.decodeFile(photoFile.path, BitmapFactory.Options())
-            } else {
-                return null
-            }
-        }
-
-        return null
-    }
+//    private fun prepPhoto(): Bitmap? {
+//        if (crime != null) {
+//            val photoFile = crime!!.photoFileName.let {
+//                File(requireContext().applicationContext.filesDir, it)
+//            }
+//
+//            if (photoFile?.exists() == true) {
+//                return BitmapFactory.decodeFile(photoFile.path, BitmapFactory.Options())
+//            } else {
+//                return null
+//            }
+//        }
+//
+//        return null
+//    }
 
     // menu methods
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

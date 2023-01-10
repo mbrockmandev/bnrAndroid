@@ -12,4 +12,13 @@
     <string name="crime_deleted_toast">The crime has been deleted from the database.</string>
     <string name="add_new_crime_button">Click here to add a new crime</string>
     <string name="handcuffs_image_description">Handcuffs</string>
+    <string name="crime_suspect_text">Choose suspect</string>
+    <string name="crime_report_text">Send Crime Report</string>
+    <string name="crime_report">%1$s! The crime was discovered on %2$s. %3$s, and %4$s</string>
+    <string name="crime_report_solved">The case is solved.</string>
+    <string name="crime_report_unsolved">The case is not solved.</string>
+    <string name="crime_report_no_suspect">There is no suspect.</string>
+    <string name="crime_report_suspect">The suspect is %s.</string>
+    <string name="crime_report_subject">CriminalIntent Crime Report</string>
+    <string name="send_report">Send crime report via</string>
 </resources>

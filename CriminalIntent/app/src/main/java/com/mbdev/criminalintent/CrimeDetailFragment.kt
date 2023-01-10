@@ -1,9 +1,14 @@
 package com.mbdev.criminalintent
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
+import android.text.format.DateFormat
 import android.view.*
-import android.widget.DatePicker
-import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuProvider
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -19,6 +24,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 private const val TAG = "CrimeDetailFragment"
+private const val DATE_FORMAT = "EEE, MMM, dd"
 
 class CrimeDetailFragment : Fragment(), MenuProvider {
     private var _binding: FragmentCrimeDetailBinding? = null
@@ -32,6 +38,13 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
         CrimeDetailViewModelFactory(args.crimeId)
     }
 
+    private val selectSuspect = registerForActivityResult(
+        ActivityResultContracts.PickContact()
+    ) { uri: Uri? ->
+        uri?.let { parseContactSelection(it) }
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,11 +53,6 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
         _binding = FragmentCrimeDetailBinding.inflate(layoutInflater, container, false)
 
         return binding.root
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,9 +108,87 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
             }
 
             cbCrimeSolved.isChecked = crime.isSolved
+
+            btnChooseSuspect.setOnClickListener { // TODO choose suspect button listener
+                selectSuspect.launch(null)
+            }
+
+            val selectSuspectIntent = selectSuspect.contract.createIntent(
+                requireContext(),
+                null
+            )
+            btnChooseSuspect.isEnabled = canResolveIntent(selectSuspectIntent)
+
+            btnChooseSuspect.text = crime.suspect.ifEmpty {
+                getString(R.string.crime_suspect_text)
+            }
+
+            btnSendCrimeReport.setOnClickListener {
+                val reportIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, getCrimeReport(crime))
+                    putExtra(
+                        Intent.EXTRA_SUBJECT,
+                        getString(R.string.crime_report_subject)
+                    )
+                }
+                val chooserIntent = Intent.createChooser(
+                    reportIntent,
+                    getString(R.string.send_report)
+                )
+                startActivity(chooserIntent)
+            }
         }
     }
 
+    private fun getCrimeReport(crime: Crime): String {
+        val solvedString = if (crime.isSolved) {
+            getString(R.string.crime_report_solved)
+        } else {
+            getString(R.string.crime_report_unsolved)
+        }
+
+        val dateString =
+            DateFormat.format(com.mbdev.criminalintent.DATE_FORMAT, crime.date).toString()
+        val suspectText = if (crime.suspect.isBlank()) {
+            getString(R.string.crime_report_no_suspect)
+        } else {
+            getString(R.string.crime_report_suspect, crime.suspect)
+        }
+
+        return getString(
+            R.string.crime_report,
+            crime.title, dateString, solvedString, suspectText
+        )
+    }
+
+    private fun parseContactSelection(contactUri: Uri) {
+        val queryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
+
+        val queryCursor = requireActivity().contentResolver
+            .query(contactUri, queryFields, null, null, null)
+
+        queryCursor?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val suspect = cursor.getString(0)
+                crimeDetailViewModel.updateCrime { oldCrime ->
+                    oldCrime.copy(suspect = suspect)
+                }
+            }
+        }
+    }
+
+    private fun canResolveIntent(intent: Intent): Boolean {
+        val packageManager: PackageManager = requireActivity().packageManager
+        val resolvedActivity: ResolveInfo? =
+            packageManager.resolveActivity(
+                intent,
+                PackageManager.MATCH_DEFAULT_ONLY
+            )
+        return resolvedActivity != null
+    }
+
+// menu methods
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         menuInflater.inflate(R.menu.fragment_crime_detail, menu)
     }

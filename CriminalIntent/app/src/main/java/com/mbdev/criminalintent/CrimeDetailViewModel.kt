@@ -1,7 +1,6 @@
 package com.mbdev.criminalintent
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import androidx.lifecycle.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

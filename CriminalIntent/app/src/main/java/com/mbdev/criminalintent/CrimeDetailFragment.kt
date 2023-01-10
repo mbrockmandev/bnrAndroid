@@ -3,13 +3,9 @@ package com.mbdev.criminalintent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.text.format.DateFormat
-import android.util.Log
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
@@ -28,6 +24,7 @@ import com.mbdev.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
+import java.text.DateFormat
 
 //private const val TAG = "CrimeDetailFragment"
 private const val DETAIL_DATE_FORMAT = "EEE, MMM, dd"
@@ -211,8 +208,8 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
             getString(R.string.crime_report_unsolved)
         }
 
-        val dateString =
-            DateFormat.format(DETAIL_DATE_FORMAT, crime.date)
+        val currentLocale = resources.configuration.locales[0]
+        val dateString = DateFormat.getDateInstance(DateFormat.SHORT, currentLocale).format(crime.date)
                 .toString()
         val suspectText = if (crime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)

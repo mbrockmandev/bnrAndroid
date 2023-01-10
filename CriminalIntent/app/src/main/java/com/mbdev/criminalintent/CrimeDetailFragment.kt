@@ -1,6 +1,5 @@
 package com.mbdev.criminalintent
 
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
@@ -27,7 +26,7 @@ import java.io.File
 import java.util.*
 
 private const val TAG = "CrimeDetailFragment"
-private const val DATE_FORMAT = "EEE, MMM, dd"
+private const val DETAIL_DATE_FORMAT = "EEE, MMM, dd"
 
 class CrimeDetailFragment : Fragment(), MenuProvider {
     private var _binding: FragmentCrimeDetailBinding? = null
@@ -36,7 +35,7 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
             "Cannot access binding because it is null. Is the view visible?"
         }
 
-    private val args: CrimeDetailFragmentArgs by navArgs()
+    private val args: com.mbdev.criminalintent.CrimeDetailFragmentArgs by navArgs()
     private val crimeDetailViewModel: CrimeDetailViewModel by viewModels {
         CrimeDetailViewModelFactory(args.crimeId)
     }
@@ -96,7 +95,7 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
                 null
             )
             btnChooseSuspect.isEnabled = canResolveIntent(selectSuspectIntent)
-            
+
             ibtnCrimeCamera.setOnClickListener {
                 photoName = "IMG_${Date()}.JPG"
                 val photoFile = File(requireContext().applicationContext.filesDir, photoName)
@@ -139,12 +138,14 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
     private fun updateUI(crime: Crime) {
         binding.apply {
             if (tvCrimeTitle.text.toString() != crime.title) {
-                tvCrimeTitle.setText(crime.title)
+                tvCrimeTitle.text = crime.title
             }
             btnCrimeDate.text = crime.date.toString()
             btnCrimeDate.setOnClickListener {
                 findNavController().navigate(
-                    CrimeDetailFragmentDirections.selectDate(crime.date)
+                    com.mbdev.criminalintent.CrimeDetailFragmentDirections.selectDate(
+                        crime.date
+                    )
                 )
             }
 
@@ -182,7 +183,8 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
         }
 
         val dateString =
-            DateFormat.format(com.mbdev.criminalintent.DATE_FORMAT, crime.date).toString()
+            DateFormat.format(DETAIL_DATE_FORMAT, crime.date)
+                .toString()
         val suspectText = if (crime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)
         } else {
@@ -256,7 +258,7 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
                 viewLifecycleOwner.lifecycleScope.launch {
                     crimeDetailViewModel.deleteCrime()
                 }
-                findNavController().navigate(CrimeDetailFragmentDirections.deleteCrime())
+                findNavController().navigate(com.mbdev.criminalintent.CrimeDetailFragmentDirections.deleteCrime())
                 true
             }
             else -> false

@@ -23,10 +23,6 @@ class CrimeListFragment : Fragment(), MenuProvider {
 
     private val crimeListViewModel: CrimeListViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -49,7 +45,7 @@ class CrimeListFragment : Fragment(), MenuProvider {
                     } else {
                         binding.rvCrimeList.adapter = CrimeListAdapter(crimes) { crimeId ->
                             findNavController().navigate(
-                                CrimeListFragmentDirections.showCrimeDetail(crimeId)
+                                com.mbdev.criminalintent.CrimeListFragmentDirections.showCrimeDetail(crimeId)
                             )
                         }
                     }
@@ -84,7 +80,11 @@ class CrimeListFragment : Fragment(), MenuProvider {
                 id = UUID.randomUUID(), title = "", date = Date(), isSolved = false
             )
             crimeListViewModel.addCrime(newCrime)
-            findNavController().navigate(CrimeListFragmentDirections.showCrimeDetail(newCrime.id))
+            findNavController().navigate(
+                com.mbdev.criminalintent.CrimeListFragmentDirections.showCrimeDetail(
+                    newCrime.id
+                )
+            )
         }
     }
 

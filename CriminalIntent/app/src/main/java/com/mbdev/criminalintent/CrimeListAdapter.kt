@@ -5,13 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Recycler
-import com.mbdev.criminalintent.MultipleCrimeListTypeAdapter.Companion.POLICE_VIEW
 import com.mbdev.criminalintent.databinding.ListItemCrimeBinding
 import com.mbdev.criminalintent.databinding.ListItemCrimePoliceBinding
-import kotlinx.coroutines.NonDisposableHandle.parent
 import java.util.*
-import kotlin.text.Typography.copyright
 
 class CrimeHolder(val binding: ListItemCrimeBinding) : RecyclerView.ViewHolder(binding.root) {
     fun bind(crime: Crime, onCrimeClicked: (crimeId: UUID) -> Unit) {

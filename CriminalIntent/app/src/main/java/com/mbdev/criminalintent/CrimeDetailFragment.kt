@@ -11,6 +11,7 @@ import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.core.view.MenuProvider
+import androidx.core.view.doOnLayout
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -25,7 +26,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 
-private const val TAG = "CrimeDetailFragment"
+//private const val TAG = "CrimeDetailFragment"
 private const val DETAIL_DATE_FORMAT = "EEE, MMM, dd"
 
 class CrimeDetailFragment : Fragment(), MenuProvider {
@@ -35,7 +36,7 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
             "Cannot access binding because it is null. Is the view visible?"
         }
 
-    private val args: com.mbdev.criminalintent.CrimeDetailFragmentArgs by navArgs()
+    private val args: CrimeDetailFragmentArgs by navArgs()
     private val crimeDetailViewModel: CrimeDetailViewModel by viewModels {
         CrimeDetailViewModelFactory(args.crimeId)
     }
@@ -143,7 +144,7 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
             btnCrimeDate.text = crime.date.toString()
             btnCrimeDate.setOnClickListener {
                 findNavController().navigate(
-                    com.mbdev.criminalintent.CrimeDetailFragmentDirections.selectDate(
+                    CrimeDetailFragmentDirections.selectDate(
                         crime.date
                     )
                 )
@@ -230,15 +231,15 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
             }
 
             if (photoFile?.exists() == true) {
-//                binding.ivCrimePhoto.doOnLayout { measuredView ->
-//                    val scaledBitmap = getScaledBitmap(
-//                        photoFile.path,
-//                        measuredView.width,
-//                        measuredView.height
-//                    )
-//                    binding.ivCrimePhoto.setImageBitmap(scaledBitmap)
-//                    binding.ivCrimePhoto.tag = photoFileName
-//                }
+                binding.ivCrimePhoto.doOnLayout { measuredView ->
+                    val scaledBitmap = getScaledBitmap(
+                        photoFile.path,
+                        measuredView.width,
+                        measuredView.height
+                    )
+                    binding.ivCrimePhoto.setImageBitmap(scaledBitmap)
+                    binding.ivCrimePhoto.tag = photoFileName
+                }
             } else {
                 binding.ivCrimePhoto.setImageBitmap(null)
                 binding.ivCrimePhoto.tag = null
@@ -258,7 +259,9 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
                 viewLifecycleOwner.lifecycleScope.launch {
                     crimeDetailViewModel.deleteCrime()
                 }
-                findNavController().navigate(com.mbdev.criminalintent.CrimeDetailFragmentDirections.deleteCrime())
+                findNavController().navigate(
+                    CrimeDetailFragmentDirections.deleteCrime()
+                )
                 true
             }
             else -> false

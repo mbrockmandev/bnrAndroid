@@ -1,5 +1,6 @@
 package com.mbdev.criminalintent
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
@@ -9,6 +10,7 @@ import android.provider.ContactsContract
 import android.text.format.DateFormat
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.view.MenuProvider
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -21,6 +23,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.mbdev.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.*
 
 private const val TAG = "CrimeDetailFragment"
@@ -44,6 +47,18 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
         uri?.let { parseContactSelection(it) }
     }
 
+    private val takePhoto = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { didTakePhoto: Boolean ->
+        if (didTakePhoto && photoName != null) {
+            crimeDetailViewModel.updateCrime { oldCrime ->
+                oldCrime.copy(photoFileName = photoName)
+            }
+        }
+    }
+
+    private var photoName: String? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,13 +81,39 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
                 }
             }
 
-
-
             cbCrimeSolved.setOnCheckedChangeListener { _, isChecked ->
                 crimeDetailViewModel.updateCrime { oldCrime ->
                     oldCrime.copy(isSolved = isChecked)
                 }
             }
+
+            btnChooseSuspect.setOnClickListener { // TODO choose suspect button listener
+                selectSuspect.launch(null)
+            }
+
+            val selectSuspectIntent = selectSuspect.contract.createIntent(
+                requireContext(),
+                null
+            )
+            btnChooseSuspect.isEnabled = canResolveIntent(selectSuspectIntent)
+            
+            ibtnCrimeCamera.setOnClickListener {
+                photoName = "IMG_${Date()}.JPG"
+                val photoFile = File(requireContext().applicationContext.filesDir, photoName)
+                val photoUri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "com.mbdev.criminalintent.fileprovider",
+                    photoFile
+                )
+
+                takePhoto.launch(photoUri)
+            }
+
+            val captureImageIntent = takePhoto.contract.createIntent(
+                requireContext(),
+                Uri.parse(""),
+            )
+            ibtnCrimeCamera.isEnabled = canResolveIntent(captureImageIntent)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -109,20 +150,6 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
 
             cbCrimeSolved.isChecked = crime.isSolved
 
-            btnChooseSuspect.setOnClickListener { // TODO choose suspect button listener
-                selectSuspect.launch(null)
-            }
-
-            val selectSuspectIntent = selectSuspect.contract.createIntent(
-                requireContext(),
-                null
-            )
-            btnChooseSuspect.isEnabled = canResolveIntent(selectSuspectIntent)
-
-            btnChooseSuspect.text = crime.suspect.ifEmpty {
-                getString(R.string.crime_suspect_text)
-            }
-
             btnSendCrimeReport.setOnClickListener {
                 val reportIntent = Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
@@ -138,6 +165,12 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
                 )
                 startActivity(chooserIntent)
             }
+
+            btnChooseSuspect.text = crime.suspect.ifEmpty {
+                getString(R.string.crime_suspect_text)
+            }
+
+            updatePhoto(crime.photoFileName)
         }
     }
 
@@ -188,7 +221,30 @@ class CrimeDetailFragment : Fragment(), MenuProvider {
         return resolvedActivity != null
     }
 
-// menu methods
+    private fun updatePhoto(photoFileName: String?) {
+        if (binding.ivCrimePhoto.tag != photoFileName) {
+            val photoFile = photoFileName?.let {
+                File(requireContext().applicationContext.filesDir, it)
+            }
+
+            if (photoFile?.exists() == true) {
+//                binding.ivCrimePhoto.doOnLayout { measuredView ->
+//                    val scaledBitmap = getScaledBitmap(
+//                        photoFile.path,
+//                        measuredView.width,
+//                        measuredView.height
+//                    )
+//                    binding.ivCrimePhoto.setImageBitmap(scaledBitmap)
+//                    binding.ivCrimePhoto.tag = photoFileName
+//                }
+            } else {
+                binding.ivCrimePhoto.setImageBitmap(null)
+                binding.ivCrimePhoto.tag = null
+            }
+        }
+    }
+
+    // menu methods
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         menuInflater.inflate(R.menu.fragment_crime_detail, menu)
     }

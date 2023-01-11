@@ -11,7 +11,9 @@ class PhotoViewHolder(
     private val binding: ListItemGalleryBinding
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(galleryitem: GalleryItem) {
-        binding.ivItem.load(galleryitem.url)
+        binding.ivItem.load(galleryitem.url) {
+            placeholder(R.drawable.bill_up_close)
+        }
     }
 }
 

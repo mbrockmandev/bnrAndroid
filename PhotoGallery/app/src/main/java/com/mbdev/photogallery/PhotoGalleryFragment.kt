@@ -13,6 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mbdev.photogallery.databinding.FragmentPhotoGalleryBinding
 import kotlinx.coroutines.launch
+import retrofit2.Retrofit
 
 private const val TAG = "PhotoGalleryFragment"
 

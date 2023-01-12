@@ -95,3 +95,15 @@ class PhotoGalleryFragment: Fragment(), MenuProvider {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+

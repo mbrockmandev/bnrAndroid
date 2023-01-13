@@ -20,6 +20,7 @@ class PhotoGalleryViewModel: ViewModel() {
         get() = _uiState.asStateFlow()
 
     init {
+
         viewModelScope.launch {
             preferencesRepository.storedQuery.collectLatest { storedQuery ->
                 try {

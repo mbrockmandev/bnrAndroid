@@ -1,13 +1,13 @@
 package com.mbdev.photogallery
 
 import android.content.Context
-import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuProvider
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -28,10 +28,6 @@ class PhotoGalleryFragment : Fragment(), MenuProvider {
         }
 
     private val photoGalleryViewModel: PhotoGalleryViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,11 +69,10 @@ class PhotoGalleryFragment : Fragment(), MenuProvider {
 
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                setLoadingState()
                 Log.d(TAG, "QueryTextSubmit: $query")
                 photoGalleryViewModel.setQuery(query ?: "")
-                val inputManager =
-                    activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                inputManager?.hideSoftInputFromWindow(view?.windowToken, 0)
+                setLoadedState()
                 return true
             }
 
@@ -105,6 +100,19 @@ class PhotoGalleryFragment : Fragment(), MenuProvider {
             }
             else -> false
         }
+    }
+
+    private fun setLoadingState() {
+        binding.lpiLoading.isVisible = true
+        binding.rvPhotoGrid.isVisible = false
+        val inputManager =
+            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        inputManager?.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
+    private fun setLoadedState() {
+        binding.lpiLoading.isVisible = false
+        binding.rvPhotoGrid.isVisible = true
     }
 }
 

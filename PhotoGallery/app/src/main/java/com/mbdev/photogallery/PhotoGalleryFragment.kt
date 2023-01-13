@@ -1,8 +1,10 @@
 package com.mbdev.photogallery
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -13,11 +15,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mbdev.photogallery.databinding.FragmentPhotoGalleryBinding
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
 
 private const val TAG = "PhotoGalleryFragment"
 
-class PhotoGalleryFragment: Fragment(), MenuProvider {
+class PhotoGalleryFragment : Fragment(), MenuProvider {
     private var _binding: FragmentPhotoGalleryBinding? = null
     private val binding
         get() = checkNotNull(_binding) {
@@ -66,7 +67,7 @@ class PhotoGalleryFragment: Fragment(), MenuProvider {
         val searchItem: MenuItem = menu.findItem(R.id.miSearch)
         val searchView = searchItem.actionView as? SearchView
 
-        searchView?.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 Log.d(TAG, "QueryTextSubmit: $query")
                 photoGalleryViewModel.setQuery(query ?: "")
@@ -78,8 +79,8 @@ class PhotoGalleryFragment: Fragment(), MenuProvider {
                 return false
             }
         })
-
     }
+
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         return when (menuItem.itemId) {
@@ -88,6 +89,11 @@ class PhotoGalleryFragment: Fragment(), MenuProvider {
                 true
             }
             R.id.miClear -> {
+                photoGalleryViewModel.setQuery("")
+
+                val inputManager =
+                    activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                inputManager?.hideSoftInputFromWindow(view?.windowToken, 0)
 
                 true
             }

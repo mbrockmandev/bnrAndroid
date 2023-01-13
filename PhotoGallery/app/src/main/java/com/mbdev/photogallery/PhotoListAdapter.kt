@@ -10,8 +10,8 @@ import com.mbdev.photogallery.databinding.ListItemGalleryBinding
 class PhotoViewHolder(
     private val binding: ListItemGalleryBinding
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(galleryitem: GalleryItem) {
-        binding.ivItem.load(galleryitem.url) {
+    fun bind(galleryItem: GalleryItem) {
+        binding.ivItem.load(galleryItem.url) {
             placeholder(R.drawable.bill_up_close)
         }
     }

@@ -4,10 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mbdev.photogallery.api.GalleryItem
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 private const val TAG = "PhotoGalleryViewModel"
@@ -16,17 +13,23 @@ class PhotoGalleryViewModel: ViewModel() {
     private val photoRepository = PhotoRepository()
     private val preferencesRepository = PreferencesRepository.get()
 
-    private val _galleryItems: MutableStateFlow<List<GalleryItem>> =
-        MutableStateFlow(emptyList())
-    val galleryItems: StateFlow<List<GalleryItem>>
-        get() = _galleryItems.asStateFlow()
+    private val _uiState: MutableStateFlow<PhotoGalleryUIState> = MutableStateFlow(
+        PhotoGalleryUIState()
+    )
+    val uiState: StateFlow<PhotoGalleryUIState>
+        get() = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
             preferencesRepository.storedQuery.collectLatest { storedQuery ->
                 try {
                     val items = fetchGalleryItems(storedQuery)
-                    _galleryItems.value = items
+                    _uiState.update { oldState ->
+                        oldState.copy(
+                            images = items,
+                            query = storedQuery
+                        )
+                    }
                 } catch (ex: Exception) {
                     Log.e(TAG, "Failed to fetch gallery items", ex)
                 }
@@ -47,3 +50,8 @@ class PhotoGalleryViewModel: ViewModel() {
 
     }
 }
+
+data class PhotoGalleryUIState(
+    val images: List<GalleryItem> = listOf(),
+    val query: String = "",
+)

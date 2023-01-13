@@ -1,6 +1,7 @@
 package com.mbdev.photogallery
 
 import android.content.Context
+import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "PhotoGalleryFragment"
 
 class PhotoGalleryFragment : Fragment(), MenuProvider {
+    private var searchView: SearchView? = null
     private var _binding: FragmentPhotoGalleryBinding? = null
     private val binding
         get() = checkNotNull(_binding) {
@@ -47,8 +49,9 @@ class PhotoGalleryFragment : Fragment(), MenuProvider {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                photoGalleryViewModel.galleryItems.collect { items ->
-                    binding.rvPhotoGrid.adapter = PhotoListAdapter(items)
+                photoGalleryViewModel.uiState.collect { state ->
+                    binding.rvPhotoGrid.adapter = PhotoListAdapter(state.images)
+                    searchView?.setQuery(state.query, false)
                 }
             }
         }
@@ -59,6 +62,7 @@ class PhotoGalleryFragment : Fragment(), MenuProvider {
     override fun onDestroyView() {
         super.onDestroyView()
         activity?.removeMenuProvider(this)
+        searchView = null
         _binding = null
     }
 
@@ -71,6 +75,9 @@ class PhotoGalleryFragment : Fragment(), MenuProvider {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 Log.d(TAG, "QueryTextSubmit: $query")
                 photoGalleryViewModel.setQuery(query ?: "")
+                val inputManager =
+                    activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                inputManager?.hideSoftInputFromWindow(view?.windowToken, 0)
                 return true
             }
 
@@ -85,7 +92,6 @@ class PhotoGalleryFragment : Fragment(), MenuProvider {
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         return when (menuItem.itemId) {
             R.id.miSearch -> {
-
                 true
             }
             R.id.miClear -> {

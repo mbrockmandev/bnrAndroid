@@ -3,10 +3,7 @@ package com.mbdev.photogallery
 import android.content.Context
 import android.preference.Preference
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStoreFile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -26,9 +23,31 @@ class PreferencesRepository private constructor(
         }
     }
 
+    val lastResultId: Flow<String> = dataStore.data.map {
+        it[PREF_LAST_RESULT_ID] ?: ""
+    }.distinctUntilChanged()
+
+    suspend fun setLastResultId(lastResultId: String) {
+        dataStore.edit {
+            it[PREF_LAST_RESULT_ID] = lastResultId
+        }
+    }
+
+    val isPolling: Flow<Boolean> = dataStore.data.map {
+        it[PREF_IS_POLLING] ?: false
+    }.distinctUntilChanged()
+
+    suspend fun setPolling(isPolling: Boolean) {
+        dataStore.edit {
+            it[PREF_IS_POLLING] = isPolling
+        }
+    }
+
     companion object {
         private val SEARCH_QUERY_KEY = stringPreferencesKey("search_query")
         private var INSTANCE: PreferencesRepository? = null
+        private val PREF_LAST_RESULT_ID = stringPreferencesKey("lastResultId")
+        private val PREF_IS_POLLING = booleanPreferencesKey("isPolling")
 
         fun initialize(context: Context) {
             if (INSTANCE == null) {

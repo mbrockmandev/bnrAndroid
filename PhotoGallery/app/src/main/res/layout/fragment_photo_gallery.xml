@@ -8,14 +8,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPhotoGrid"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
     </androidx.recyclerview.widget.RecyclerView>
 
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/lpiLoading"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:paddingHorizontal="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

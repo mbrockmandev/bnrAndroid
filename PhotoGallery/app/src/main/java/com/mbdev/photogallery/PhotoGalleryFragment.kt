@@ -1,13 +1,14 @@
 package com.mbdev.photogallery
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
+import android.text.InputType.TYPE_NULL
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuProvider
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -29,13 +30,13 @@ class PhotoGalleryFragment : Fragment(), MenuProvider {
 
     private val photoGalleryViewModel: PhotoGalleryViewModel by viewModels()
 
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentPhotoGalleryBinding.inflate(layoutInflater, container, false)
         binding.rvPhotoGrid.layoutManager = GridLayoutManager(context, 3)
+
         return binding.root
     }
 
@@ -103,20 +104,26 @@ class PhotoGalleryFragment : Fragment(), MenuProvider {
     }
 
     private fun setLoadingState() {
-        binding.lpiLoading.isVisible = true
-        binding.rvPhotoGrid.isVisible = false
+        binding.pbLoading.visibility = View.VISIBLE
+        binding.rvPhotoGrid.visibility = View.GONE
         val inputManager =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputManager?.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     private fun setLoadedState() {
-        binding.lpiLoading.isVisible = false
-        binding.rvPhotoGrid.isVisible = true
+        binding.pbLoading.visibility = View.GONE
+        binding.rvPhotoGrid.visibility = View.VISIBLE
     }
+
+
 }
 
-
+fun SearchView.setReadOnly(value: Boolean, inputType: Int = TYPE_NULL) {
+    isFocusable = !value
+    isFocusableInTouchMode = !value
+    this.inputType = inputType
+}
 
 
 

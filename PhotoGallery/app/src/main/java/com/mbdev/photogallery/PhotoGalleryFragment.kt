@@ -1,11 +1,14 @@
 package com.mbdev.photogallery
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType.TYPE_NULL
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.webkit.WebViewClient
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -13,6 +16,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.work.*
 import com.mbdev.photogallery.databinding.FragmentPhotoGalleryBinding
@@ -38,11 +43,13 @@ class PhotoGalleryFragment : Fragment(), MenuProvider {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPhotoGalleryBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentPhotoGalleryBinding.inflate(inflater, container, false)
         binding.rvPhotoGrid.layoutManager = GridLayoutManager(context, 3)
+
 
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,7 +58,15 @@ class PhotoGalleryFragment : Fragment(), MenuProvider {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 photoGalleryViewModel.uiState.collect { state ->
-                    binding.rvPhotoGrid.adapter = PhotoListAdapter(state.images)
+                    binding.rvPhotoGrid.adapter = PhotoListAdapter(
+                        state.images,
+                    ) { photoPageUri ->
+                        findNavController().navigate(
+                            PhotoGalleryFragmentDirections.navShowPhoto(
+                                photoPageUri
+                            )
+                        )
+                    }
                     searchView?.setQuery(state.query, false)
                     updatePollingState(state.isPolling)
                 }

@@ -15,6 +15,9 @@ class MainActivity : AppCompatActivity() {
 
     private val animatorSet = AnimatorSet()
 
+    private var sunYPos = 0.0
+    private var skyColor = 0
+
     private val blueSkyColor: Int by lazy {
         ContextCompat.getColor(this, R.color.blue_sky)
     }

@@ -1,5 +1,6 @@
 package com.mbdev.photogallery.api
 
+import android.util.Log
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -21,6 +22,8 @@ class PhotoInterceptor: Interceptor {
             .url(newUrl)
             .build()
 
+        Log.d("newUrl:", HttpUrl.toString())
+        Log.d("newRequest:", newRequest.toString())
         return chain.proceed(newRequest)
     }
 

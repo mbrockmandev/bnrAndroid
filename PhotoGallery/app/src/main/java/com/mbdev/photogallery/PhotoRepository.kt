@@ -1,5 +1,6 @@
 package com.mbdev.photogallery
 
+import android.util.Log
 import com.mbdev.photogallery.api.FlickrApi
 import com.mbdev.photogallery.api.GalleryItem
 import com.mbdev.photogallery.api.PhotoInterceptor
@@ -22,6 +23,7 @@ class PhotoRepository {
             .client(okHttpClient)
             .build()
 
+//        Log.d("retrofit:", retrofit.toString())
         flickrApi = retrofit.create()
     }
 

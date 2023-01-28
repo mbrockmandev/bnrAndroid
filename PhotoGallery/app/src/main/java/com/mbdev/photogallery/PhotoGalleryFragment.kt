@@ -1,14 +1,12 @@
 package com.mbdev.photogallery
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
+
 import android.os.Bundle
 import android.text.InputType.TYPE_NULL
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.webkit.WebViewClient
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -17,7 +15,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.work.*
 import com.mbdev.photogallery.databinding.FragmentPhotoGalleryBinding
@@ -150,16 +147,14 @@ class PhotoGalleryFragment : Fragment(), MenuProvider {
         pollingMenuItem?.setTitle(toggleItemTitle)
 
         if (isPolling) {
-            val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.UNMETERED)
-                .build()
-            val periodicRequest = PeriodicWorkRequestBuilder<PollWorker>(15, TimeUnit.MINUTES)
-                .setConstraints(constraints)
-                .build()
+            val constraints =
+                Constraints.Builder().setRequiredNetworkType(NetworkType.UNMETERED).build()
+            val periodicRequest =
+                PeriodicWorkRequestBuilder<PollWorker>(15, TimeUnit.MINUTES).setConstraints(
+                    constraints
+                ).build()
             WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
-                POLL_WORK,
-                ExistingPeriodicWorkPolicy.KEEP,
-                periodicRequest
+                POLL_WORK, ExistingPeriodicWorkPolicy.KEEP, periodicRequest
             )
         } else {
             WorkManager.getInstance(requireContext()).cancelUniqueWork(POLL_WORK)
